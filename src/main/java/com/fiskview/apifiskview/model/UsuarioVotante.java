@@ -41,7 +41,7 @@ public class UsuarioVotante {
     private Integer estado; // Estado del usuario (1 = activo, 0 = inactivo)
 
     @Column(name = "imagen_facial", columnDefinition = "TEXT")
-    private String imagenFacial;
+    private String imagen_facial;
 
 
     public Long getId() {
@@ -133,10 +133,10 @@ public class UsuarioVotante {
     }
 
     public String getImagenFacial() {
-        return imagenFacial;
+        return imagen_facial;
     }
 
-    public void setImagenFacial(String imagenFacial) {
-        this.imagenFacial = imagenFacial;
+    public void setImagenFacial(String imagen_facial) {
+        this.imagen_facial = imagen_facial;
     }
 }
