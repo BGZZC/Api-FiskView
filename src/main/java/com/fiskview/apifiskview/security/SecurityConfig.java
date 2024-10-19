@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .cors() // Habilita la configuración CORS
                 .and()
                 .authorizeRequests()
-                .requestMatchers("/usuarios/**").permitAll()
+                .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/auth/login").permitAll()
                 .anyRequest().authenticated()
