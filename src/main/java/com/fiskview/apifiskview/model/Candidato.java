@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Candidato {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCandidato;
+    private Long id;
 
     @Column(name = "id_campana", nullable = false)
     private Integer idCampana;
@@ -29,11 +29,11 @@ public class Candidato {
     private byte[] propuesta;
 
     public Long getIdCandidato() {
-        return idCandidato;
+        return id;
     }
 
-    public void setIdCandidato(Long idCandidato) {
-        this.idCandidato = idCandidato;
+    public void setIdCandidato(Long id) {
+        this.id = id;
     }
 
     public Integer getIdCampana() {
