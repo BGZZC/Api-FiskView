@@ -24,9 +24,8 @@ public class Candidato {
     @Column(name = "informacion")
     private String informacion;
 
-    @Lob
-    @Column(name = "propuesta")
-    private byte[] propuesta;
+    @Column(name = "propuesta", columnDefinition = "TEXT")
+    private String propuesta;
 
     public Long getIdCandidato() {
         return id;
@@ -76,11 +75,11 @@ public class Candidato {
         this.informacion = informacion;
     }
 
-    public byte[] getPropuesta() {
+    public String getPropuesta() {
         return propuesta;
     }
 
-    public void setPropuesta(byte[] propuesta) {
+    public void setPropuesta(String propuesta) {
         this.propuesta = propuesta;
     }
 }
