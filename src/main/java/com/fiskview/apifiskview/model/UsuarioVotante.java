@@ -29,14 +29,6 @@ public class UsuarioVotante {
     private String password;
 
 
-    private Integer departamentoId;
-
-
-    private Integer provinciaId;
-
-
-    private Integer distritoId;
-
     @Column(name = "estado")
     private Integer estado; // Estado del usuario (1 = activo, 0 = inactivo)
 
@@ -100,29 +92,6 @@ public class UsuarioVotante {
         this.password = password;
     }
 
-    public Integer getDepartamentoId() {
-        return departamentoId;
-    }
-
-    public void setDepartamentoId(Integer departamentoId) {
-        this.departamentoId = departamentoId;
-    }
-
-    public Integer getProvinciaId() {
-        return provinciaId;
-    }
-
-    public void setProvinciaId(Integer provinciaId) {
-        this.provinciaId = provinciaId;
-    }
-
-    public Integer getDistritoId() {
-        return distritoId;
-    }
-
-    public void setDistritoId(Integer distritoId) {
-        this.distritoId = distritoId;
-    }
 
     public Integer getEstado() {
         return estado;

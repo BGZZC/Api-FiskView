@@ -115,6 +115,11 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>11.2.0.jre8</version> <!-- Asegúrate de usar la versión más reciente que sea compatible con tu proyecto -->
+        </dependency>
     </dependencies>
 
     <build>
