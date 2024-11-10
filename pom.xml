@@ -118,7 +118,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>11.2.0.jre8</version> <!-- Asegúrate de usar la versión más reciente que sea compatible con tu proyecto -->
+            <version>11.2.0.jre17</version> <!-- Para Java 17 -->
         </dependency>
     </dependencies>
 
