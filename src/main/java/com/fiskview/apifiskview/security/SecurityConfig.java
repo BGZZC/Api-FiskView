@@ -81,10 +81,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8100",        // Para desarrollo local
-                "https://fiskview.web.app"      // Para producción (Firebase Hosting)
-        ));
+        config.setAllowedOrigins(Collections.singletonList("https://fiskview.web.app")); // Permite solicitudes desde Ionic
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Encabezados permitidos
         config.setAllowCredentials(true); // Permitir cookies
