@@ -108,4 +108,19 @@ public class UsuarioVotante {
     public void setImagenFacial(String imagen_facial) {
         this.imagen_facial = imagen_facial;
     }
+
+    @Override
+    public String toString() {
+        return "UsuarioVotante{" +
+                "id=" + id +
+                ", nombres='" + nombres + '\'' +
+                ", apellidos='" + apellidos + '\'' +
+                ", dni='" + dni + '\'' +
+                ", fechaNacimiento='" + fechaNacimiento + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", estado=" + estado +
+                ", imagen_facial='" + imagen_facial + '\'' +
+                '}';
+    }
 }

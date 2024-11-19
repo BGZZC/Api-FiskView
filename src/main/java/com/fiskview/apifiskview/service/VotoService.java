@@ -18,6 +18,10 @@ public class VotoService {
         return votoRepository.save(voto);
     }
 
+    public String f_insertar_voto(Voto voto){
+        return votoRepository.f_insertar_voto(voto.getId_usuario(), voto.getCampana_id(),voto.getCandidato_id(), voto.getCodigoHash());
+    }
+
     public List<Voto> obtenerTodosLosVotos() {
         return votoRepository.findAll();
     }
@@ -29,7 +33,7 @@ public class VotoService {
 
     public Voto actualizarVoto(Long id, Voto voto) {
         if (votoRepository.existsById(id)) {
-            voto.setIdVoto(id);
+            voto.setId(id);
             return votoRepository.save(voto);
         }
         return null;

@@ -27,8 +27,8 @@ public class Campana {
     @Column(name = "estado", nullable = false)
     private Short estado;
 
-    @OneToMany(mappedBy = "campana")
-    private List<Voto> votos;
+    //@OneToMany(mappedBy = "campana")
+    //private List<Voto> votos;
 
 
     // Getters and Setters
@@ -79,5 +79,17 @@ public class Campana {
 
     public void setEstado(Short estado) {
         this.estado = estado;
+    }
+
+    @Override
+    public String toString() {
+        return "Campana{" +
+                "id=" + id +
+                ", año=" + año +
+                ", descripcion='" + descripcion + '\'' +
+                ", fechaInicio=" + fechaInicio +
+                ", fechaFin=" + fechaFin +
+                ", estado=" + estado +
+                '}';
     }
 }

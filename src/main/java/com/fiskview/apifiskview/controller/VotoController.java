@@ -18,8 +18,9 @@ public class VotoController {
 
     // Crear un nuevo voto
     @PostMapping
-    public ResponseEntity<Voto> crearVoto(@RequestBody Voto voto) {
-        Voto nuevoVoto = votoService.crearVoto(voto);
+    public ResponseEntity<?> crearVoto(@RequestBody Voto voto) {
+        System.out.println(voto.toString());
+        String nuevoVoto = votoService.f_insertar_voto(voto);
         return new ResponseEntity<>(nuevoVoto, HttpStatus.CREATED);
     }
 

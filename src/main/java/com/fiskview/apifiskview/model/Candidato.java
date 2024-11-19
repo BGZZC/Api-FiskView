@@ -82,4 +82,17 @@ public class Candidato {
     public void setPropuesta(String propuesta) {
         this.propuesta = propuesta;
     }
+
+    @Override
+    public String toString() {
+        return "Candidato{" +
+                "id=" + id +
+                ", idCampana=" + idCampana +
+                ", idPartido=" + idPartido +
+                ", nombre='" + nombre + '\'' +
+                ", apellidos='" + apellidos + '\'' +
+                ", informacion='" + informacion + '\'' +
+                ", propuesta='" + propuesta + '\'' +
+                '}';
+    }
 }
