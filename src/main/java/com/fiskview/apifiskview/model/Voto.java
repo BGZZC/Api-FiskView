@@ -15,11 +15,11 @@ public class Voto {
     private UsuarioVotante usuario; // Relación con Usuario
 
     @ManyToOne
-    @JoinColumn(name = "campana_id")
+    @JoinColumn(name = "id_campana")
     private Campana campana;
 
     @ManyToOne
-    @JoinColumn(name = "candidato_id")
+    @JoinColumn(name = "id_candidato")
     private Candidato candidato;
 
     @Column(name = "codigo_hash", nullable = false, unique = true)

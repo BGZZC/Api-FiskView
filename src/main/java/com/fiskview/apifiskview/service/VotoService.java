@@ -1,6 +1,13 @@
 package com.fiskview.apifiskview.service;
 
+import com.fiskview.apifiskview.dto.VotoDTO;
+import com.fiskview.apifiskview.model.Campana;
+import com.fiskview.apifiskview.model.Candidato;
+import com.fiskview.apifiskview.model.UsuarioVotante;
 import com.fiskview.apifiskview.model.Voto;
+import com.fiskview.apifiskview.repository.CampanaRepository;
+import com.fiskview.apifiskview.repository.CandidatoRepository;
+import com.fiskview.apifiskview.repository.UsuarioVotanteRepository;
 import com.fiskview.apifiskview.repository.VotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,9 +19,34 @@ import java.util.Optional;
 public class VotoService {
 
     @Autowired
+    private UsuarioVotanteRepository usuarioRepository;  // Repositorio para acceder a la tabla de usuarios
+    @Autowired
+    private CampanaRepository campanaRepository;
+    @Autowired
+    private CandidatoRepository candidatoRepository;
+    @Autowired
     private VotoRepository votoRepository;
 
-    public Voto crearVoto(Voto voto) {
+    public Voto crearVoto(VotoDTO votoDTO) {
+        // Verificamos que el usuario existe en la base de datos
+        UsuarioVotante usuario = usuarioRepository.findById(votoDTO.getIdUsuario())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Verificamos que la campaña y el candidato existen en la base de datos
+        Campana campana = campanaRepository.findById(votoDTO.getIdCampana())
+                .orElseThrow(() -> new RuntimeException("Campaña no encontrada"));
+        Candidato candidato = candidatoRepository.findById(votoDTO.getIdCandidato())
+                .orElseThrow(() -> new RuntimeException("Candidato no encontrado"));
+
+        // Crear un nuevo voto y asignar los valores
+        Voto voto = new Voto();
+        voto.setUsuario(usuario);         // Asignamos el objeto UsuarioVotante
+        voto.setCampana(campana);         // Asignamos el objeto Campana
+        voto.setCandidato(candidato);     // Asignamos el objeto Candidato
+        voto.setCodigoHash(votoDTO.getCodigoHash());
+        voto.setFechaVoto(votoDTO.getFechaVoto());
+
+        // Guardamos el voto en la base de datos
         return votoRepository.save(voto);
     }
 

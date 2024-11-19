@@ -30,16 +30,14 @@ public class Campana {
     @OneToMany(mappedBy = "campana")
     private List<Voto> votos;
 
-
-    // Getters and Setters
-
-    public Long getIdCampana() {
+    public Long getId() {
         return id;
     }
 
-    public void setIdCampana(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
+
 
     public Integer getAño() {
         return año;

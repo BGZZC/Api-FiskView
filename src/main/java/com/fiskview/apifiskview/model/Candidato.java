@@ -27,13 +27,14 @@ public class Candidato {
     @Column(name = "propuesta", columnDefinition = "TEXT")
     private String propuesta;
 
-    public Long getIdCandidato() {
+    public Long getId() {
         return id;
     }
 
-    public void setIdCandidato(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
+
 
     public Integer getIdCampana() {
         return idCampana;
