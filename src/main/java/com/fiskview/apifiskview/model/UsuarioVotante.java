@@ -2,6 +2,8 @@ package com.fiskview.apifiskview.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "usuario_votante")
 public class UsuarioVotante {
@@ -20,7 +22,7 @@ public class UsuarioVotante {
     private String dni;
 
     @Column(name = "fecha_nacimiento")
-    private String fechaNacimiento;
+    private Date fechaNacimiento;
 
     @Column(name = "email")
     private String email;
@@ -68,11 +70,11 @@ public class UsuarioVotante {
         this.dni = dni;
     }
 
-    public String getFechaNacimiento() {
+    public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
 
-    public void setFechaNacimiento(String fechaNacimiento) {
+    public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
 

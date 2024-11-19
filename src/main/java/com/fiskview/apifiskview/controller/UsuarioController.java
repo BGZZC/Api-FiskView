@@ -12,11 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,25 +33,36 @@ public class UsuarioController {
     private PasswordEncoder passwordEncoder;*/
 
     @PostMapping
-    public ResponseEntity<String> registrarUsuario(@RequestBody UsuarioVotante usuarios) {
-        Optional<UsuarioVotante> usuarioExistente = usuariovotanteRepository.findByEmail(usuarios.getEmail());
+    public ResponseEntity<String> registrarUsuario(
+            @RequestParam("nombres") String nombres,
+            @RequestParam("apellidos") String apellidos,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("dni") String dni,
+            @RequestParam("fechaNacimiento") String fechaNacimientoStr,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) {
+
+        // Validación de existencia de usuario
+        Optional<UsuarioVotante> usuarioExistente = usuariovotanteRepository.findByEmail(email);
         if (usuarioExistente.isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El correo electrónico ya está en uso.");
         }
 
-        if (!validarEmail(usuarios.getEmail())) {
+        // Validación del email
+        if (!validarEmail(email)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El correo electrónico no es válido.");
         }
 
-        if (usuarios.getNombres() == null || usuarios.getNombres().isEmpty()) {
+        // Validación de los nombres y apellidos
+        if (nombres == null || nombres.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El nombre es obligatorio.");
         }
 
-        if (usuarios.getApellidos() == null || usuarios.getApellidos().isEmpty()) {
+        if (apellidos == null || apellidos.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El apellido es obligatorio.");
         }
 
-        String password = usuarios.getPassword();
+        // Validación de la contraseña
         if (!validarContrasena(password)) {
             StringBuilder mensaje = new StringBuilder("La contraseña no cumple con los requisitos mínimos. Requisitos faltantes:");
             if (password.length() < 8) {
@@ -68,8 +80,39 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensaje.toString());
         }
 
-        //usuarios.setContrasena(passwordEncoder.encode(usuarios.getContrasena()));
-        UsuarioVotante usuarioGuardado = usuariovotanteRepository.save(usuarios);
+        // Validación del DNI (ejemplo, asegurándose de que tenga 8 caracteres numéricos)
+        if (!validarDNI(dni)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El DNI no es válido.");
+        }
+
+        // Validación de la fecha de nacimiento
+        Date fechaNacimiento = parseFechaNacimiento(fechaNacimientoStr);
+        if (fechaNacimiento == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La fecha de nacimiento no es válida.");
+        }
+
+        // Convertir la imagen a Base64 si se proporciona una
+        String imageBase64 = null;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                imageBase64 = encodeImageToBase64(profileImage);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al procesar la imagen.");
+            }
+        }
+
+        // Crear y guardar el usuario
+        UsuarioVotante usuario = new UsuarioVotante();
+        usuario.setNombres(nombres);
+        usuario.setApellidos(apellidos);
+        usuario.setEmail(email);
+        usuario.setPassword(password);  // Normalmente se debe encriptar la contraseña
+        usuario.setImagenFacial(imageBase64);  // Almacenar la imagen en base64
+        usuario.setDni(dni);
+        usuario.setFechaNacimiento(fechaNacimiento);
+        usuario = usuariovotanteRepository.save(usuario);
+
+        // Responder con mensaje de éxito
         Map<String, String> response = new HashMap<>();
         response.put("message", "Usuario registrado correctamente.");
         Gson gson = new Gson();
@@ -191,4 +234,26 @@ public class UsuarioController {
         }
         return null;
     }
+
+    private String encodeImageToBase64(MultipartFile file) throws IOException {
+        byte[] bytes = file.getBytes();
+        return Base64.getEncoder().encodeToString(bytes);  // Convierte los bytes en Base64
+    }
+
+    // Método de validación de DNI (ejemplo simple, puede ajustarse a los requisitos)
+    private boolean validarDNI(String dni) {
+        // Aquí puedes agregar una validación más robusta según el formato del DNI en tu país
+        return dni != null && dni.matches("\\d{8}");  // Ejemplo: un DNI con 8 dígitos numéricos
+    }
+
+    // Método para convertir la fecha de nacimiento de String a Date
+    private Date parseFechaNacimiento(String fechaNacimientoStr) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  // Formato de la fecha (puedes ajustarlo)
+        try {
+            return sdf.parse(fechaNacimientoStr);
+        } catch (ParseException e) {
+            return null;  // Si no se puede parsear la fecha, retornamos null
+        }
+    }
+
 }
