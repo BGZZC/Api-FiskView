@@ -1,6 +1,7 @@
 package com.fiskview.apifiskview.controller;
 
 import com.fiskview.apifiskview.model.Voto;
+import com.fiskview.apifiskview.service.FabricService;
 import com.fiskview.apifiskview.service.VotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,10 @@ public class VotoController {
 
     @Autowired
     private VotoService votoService;
+
+    @Autowired
+    private FabricService fabricService;
+
 
     // Crear un nuevo voto
     @PostMapping
@@ -42,25 +47,34 @@ public class VotoController {
         }
     }
 
-    // Actualizar un voto
-    @PutMapping("/{id}")
-    public ResponseEntity<Voto> actualizarVoto(@PathVariable("id") Long id, @RequestBody Voto voto) {
-        Voto votoActualizado = votoService.actualizarVoto(id, voto);
-        if (votoActualizado != null) {
-            return new ResponseEntity<>(votoActualizado, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    @PostMapping("/registrar")
+    public String registrarVoto(@RequestParam String votoId,
+                                @RequestParam String codigo_hash,
+                                @RequestParam String fecha_voto,
+                                @RequestParam int campana_id,
+                                @RequestParam int candidato_id,
+                                @RequestParam int id_usuario) {
+        try {
+            // Llamada al smart contract para registrar el voto
+            String result = fabricService.invokeSmartContract("VotoContract", "registrarVoto", new String[] {
+                    votoId, codigo_hash, fecha_voto, String.valueOf(campana_id), String.valueOf(candidato_id), String.valueOf(id_usuario)
+            });
+            return result;
+        } catch (Exception e) {
+            return "Error al registrar el voto: " + e.getMessage();
         }
     }
 
-    // Eliminar un voto
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarVoto(@PathVariable("id") Long id) {
-        boolean eliminado = votoService.eliminarVoto(id);
-        if (eliminado) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    // Endpoint para obtener un voto por su ID
+    @GetMapping("/obtener/{votoId}")
+    public Object obtenerVoto(@PathVariable String votoId) {
+        try {
+            // Llamada al smart contract para obtener el voto
+            String result = fabricService.invokeSmartContract("VotoContract", "obtenerVoto", new String[] { votoId });
+            return result; // Retorna el voto como JSON o algún formato adecuado
+        } catch (Exception e) {
+            return "Error al obtener el voto: " + e.getMessage();
         }
     }
 }
