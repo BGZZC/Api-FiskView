@@ -1,12 +1,17 @@
 package com.fiskview.apifiskview.controller;
 
+import com.fiskview.apifiskview.dto.DetailEventDTO;
+import com.fiskview.apifiskview.dto.EventTransaccionDTO;
 import com.fiskview.apifiskview.model.Voto;
+import com.fiskview.apifiskview.service.EventService;
 import com.fiskview.apifiskview.service.VotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.web3j.protocol.exceptions.TransactionException;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,9 +21,13 @@ public class VotoController {
     @Autowired
     private VotoService votoService;
 
+    @Autowired
+    private EventService eventService;
+
+
     // Crear un nuevo voto
     @PostMapping
-    public ResponseEntity<?> crearVoto(@RequestBody Voto voto) {
+    public ResponseEntity<?> crearVoto(@RequestBody Voto voto) throws TransactionException, IOException {
         System.out.println(voto.toString());
         String nuevoVoto = votoService.f_insertar_voto(voto);
         return new ResponseEntity<>(nuevoVoto, HttpStatus.CREATED);
@@ -62,5 +71,17 @@ public class VotoController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/evento/{hash}")
+    public ResponseEntity<EventTransaccionDTO> obtenerEventoTransaccion(@PathVariable String hash) throws Exception {
+        EventTransaccionDTO response = eventService.obtenerDetallesEventoPorTransaccion(hash);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/evento/detail/{hash}")
+    public ResponseEntity<DetailEventDTO> detalleEventoTransaccion(@PathVariable String hash) throws Exception {
+        DetailEventDTO response = votoService.obtenerDetalleEventoByHash(hash);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

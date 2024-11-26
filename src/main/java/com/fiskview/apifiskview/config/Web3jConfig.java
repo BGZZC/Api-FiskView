@@ -20,5 +20,4 @@ public class Web3jConfig {
         return Web3j.build(new HttpService(urlServer + ":" + port));
     }
 
-
 }
