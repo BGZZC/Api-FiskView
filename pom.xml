@@ -120,6 +120,14 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>11.2.0.jre17</version> <!-- Para Java 17 -->
         </dependency>
+
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.8.7</version>  <!-- Usa la versión más reciente disponible -->
+        </dependency>
+
+
     </dependencies>
 
     <build>
