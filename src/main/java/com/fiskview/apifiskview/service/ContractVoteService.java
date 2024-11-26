@@ -1,5 +1,7 @@
 package com.fiskview.apifiskview.service;
 
+import com.fiskview.apifiskview.dto.BlockDTO;
+import com.fiskview.apifiskview.dto.TransactionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -22,6 +26,7 @@ import org.web3j.tx.response.PollingTransactionReceiptProcessor;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -97,6 +102,40 @@ public class ContractVoteService {
         List<Type> result = FunctionReturnDecoder.decode(response.getResult(), function.getOutputParameters());
         return (Boolean) result.get(0).getValue();
     }
+
+    public List<BlockDTO> listarBloquesYTransacciones() throws Exception {
+        BigInteger ultimoBloque = web3j.ethBlockNumber().send().getBlockNumber();
+        List<BlockDTO> bloques = new ArrayList<>();
+
+        for (BigInteger i = BigInteger.ZERO; i.compareTo(ultimoBloque) <= 0; i = i.add(BigInteger.ONE)) {
+            EthBlock ethBlock = web3j.ethGetBlockByNumber(DefaultBlockParameter.valueOf(i), true).send();
+            EthBlock.Block bloque = ethBlock.getBlock();
+            BlockDTO blockDTO = new BlockDTO();
+            blockDTO.setBlockNumber(bloque.getNumber());
+            blockDTO.setBlockHash(bloque.getHash());
+            blockDTO.setTimestamp(bloque.getTimestamp());
+            blockDTO.setMiner(bloque.getMiner());
+            blockDTO.setTransactionCount(bloque.getTransactions().size());
+            List<TransactionDTO> transactionDTOs = new ArrayList<>();
+            for (EthBlock.TransactionResult txResult : bloque.getTransactions()) {
+                EthBlock.TransactionObject tx = (EthBlock.TransactionObject) txResult.get();
+
+                TransactionDTO transactionDTO = new TransactionDTO();
+                transactionDTO.setTransactionHash(tx.getHash());
+                transactionDTO.setFrom(tx.getFrom());
+                transactionDTO.setTo(tx.getTo());
+                transactionDTO.setValue(tx.getValue());
+
+                transactionDTOs.add(transactionDTO);
+            }
+            blockDTO.setTransactions(transactionDTOs);
+
+            bloques.add(blockDTO);
+        }
+
+        return bloques;
+    }
+
 
 
 

@@ -87,6 +87,10 @@ public class VotoService {
         return null;
     }
 
+    public void listarBloques() throws Exception {
+        contractVoteService.listarBloquesYTransacciones();
+    }
+
     public boolean eliminarVoto(Long id) {
         if (votoRepository.existsById(id)) {
             votoRepository.deleteById(id);
