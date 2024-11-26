@@ -1,8 +1,10 @@
 package com.fiskview.apifiskview.controller;
 
+import com.fiskview.apifiskview.dto.BlockDTO;
 import com.fiskview.apifiskview.dto.DetailEventDTO;
 import com.fiskview.apifiskview.dto.EventTransaccionDTO;
 import com.fiskview.apifiskview.model.Voto;
+import com.fiskview.apifiskview.service.ContractVoteService;
 import com.fiskview.apifiskview.service.EventService;
 import com.fiskview.apifiskview.service.VotoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class VotoController {
 
     @Autowired
     private EventService eventService;
+
+    @Autowired
+    private ContractVoteService contractVoteService;
 
 
     // Crear un nuevo voto
@@ -73,6 +78,7 @@ public class VotoController {
         }
     }
 
+
     @GetMapping("/evento/{hash}")
     public ResponseEntity<EventTransaccionDTO> obtenerEventoTransaccion(@PathVariable String hash) throws Exception {
         EventTransaccionDTO response = eventService.obtenerDetallesEventoPorTransaccion(hash);
@@ -83,5 +89,15 @@ public class VotoController {
     public ResponseEntity<DetailEventDTO> detalleEventoTransaccion(@PathVariable String hash) throws Exception {
         DetailEventDTO response = votoService.obtenerDetalleEventoByHash(hash);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/bloques")
+    public ResponseEntity<List<BlockDTO>> listarBloquesYTransacciones() {
+        try {
+            List<BlockDTO> bloques = contractVoteService.listarBloquesYTransacciones();
+            return ResponseEntity.ok(bloques);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }
