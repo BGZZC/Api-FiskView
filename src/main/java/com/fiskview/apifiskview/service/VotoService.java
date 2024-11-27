@@ -39,23 +39,39 @@ public class VotoService {
     }
 
     public String f_insertar_voto(Voto voto) throws TransactionException, IOException {
-        // Validar que el usaurio no haya votado
-        if (contractVoteService.hasUserVoted((long) voto.getCampana_id(), (long) voto.getId_usuario()))
+        // Validar que el usuario no haya votado
+        if (contractVoteService.hasUserVoted((long) voto.getCampana_id(), (long) voto.getId_usuario())) {
             throw new RuntimeException("El usuario ya ha votado");
-        // Transaccion
-        TransactionReceipt transaction = contractVoteService.vote((long) voto.getCampana_id(),
+        }
+
+        // Realizar la transacción en la blockchain
+        TransactionReceipt transaction = contractVoteService.vote(
+                (long) voto.getCampana_id(),
                 (long) voto.getCandidato_id(),
-                (long) voto.getId_usuario());
-        // Verificar si fue correcta
-        if (transaction.isStatusOK())
-            return votoRepository.f_insertar_voto(
+                (long) voto.getId_usuario()
+        );
+
+        // Verificar si la transacción fue correcta
+        if (transaction.isStatusOK()) {
+            // Obtener el hash de la transacción
+            String transactionHash = transaction.getTransactionHash();
+
+            // Insertar en la base de datos llamando al procedimiento almacenado
+            votoRepository.f_insertar_voto(
                     voto.getId_usuario(),
                     voto.getCampana_id(),
                     voto.getCandidato_id(),
-                    transaction.getTransactionHash());
-        // Si sale mal, error en la transaccion
+                    transactionHash
+            );
+
+            // Retornar el hash para el controlador
+            return transactionHash;
+        }
+
+        // Si la transacción no fue exitosa, lanzar excepción
         throw new TransactionException("Error en el registro de la transacción");
     }
+
 
     public List<Voto> obtenerTodosLosVotos() {
         return votoRepository.findAll();

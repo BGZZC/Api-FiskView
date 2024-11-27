@@ -13,7 +13,7 @@ public interface VotoRepository extends JpaRepository<Voto, Long> {
   //  List<Voto> findByUsuarioId(Long id_usuario); // Obtener votos por ID de usuario
   //  List<Voto> findByCampana_Id(Long campanaId); // Obtener votos por ID de campaña
   //  List<Voto> findByCandidatoId(Long candidatoId);
-
+  boolean existsByCodigoHash(String codigoHash);
     @Procedure(name="f_insertar_voto")
     public String f_insertar_voto(
             @Param("in_idusuario") int id_usuario,
