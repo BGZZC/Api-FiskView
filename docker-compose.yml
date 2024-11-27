@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  fisk-app-docker:
+    container_name: spring-api-fisk
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://fisk_database:5432/fisk_view
+    ports:
+      - "8081:8081"
+    restart: always
+    depends_on:
+      fisk_database:
+        condition: service_healthy
+
+  fisk_database:
+    container_name: fisk-database-postgres
+    image: postgres:14.15
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: fisk_view
+      POSTGRES_USER: postgres
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d fisk_view" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
