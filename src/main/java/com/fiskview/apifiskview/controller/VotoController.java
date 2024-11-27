@@ -4,6 +4,7 @@ import com.fiskview.apifiskview.dto.BlockDTO;
 import com.fiskview.apifiskview.dto.DetailEventDTO;
 import com.fiskview.apifiskview.dto.EventTransaccionDTO;
 import com.fiskview.apifiskview.model.Voto;
+import com.fiskview.apifiskview.repository.VotoRepository;
 import com.fiskview.apifiskview.service.ContractVoteService;
 import com.fiskview.apifiskview.service.EventService;
 import com.fiskview.apifiskview.service.VotoService;
@@ -28,14 +29,14 @@ public class VotoController {
 
     @Autowired
     private ContractVoteService contractVoteService;
-
+    @Autowired
+    private VotoRepository votoRepository;
 
     // Crear un nuevo voto
     @PostMapping
     public ResponseEntity<?> crearVoto(@RequestBody Voto voto) throws TransactionException, IOException {
-        System.out.println(voto.toString());
-        String nuevoVoto = votoService.f_insertar_voto(voto);
-        return new ResponseEntity<>(nuevoVoto, HttpStatus.CREATED);
+        String hash = votoService.f_insertar_voto(voto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(hash);
     }
 
     // Obtener todos los votos
@@ -98,6 +99,15 @@ public class VotoController {
             return ResponseEntity.ok(bloques);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    @GetMapping("/verificar")
+    public ResponseEntity<String> verificarHash(@RequestParam String hash) {
+        boolean exists = votoRepository.existsByCodigoHash(hash);
+        if (exists) {
+            return ResponseEntity.ok("Voto encontrado: Gracias por votar.");
+        } else {
+            return ResponseEntity.ok("Voto no encontrado: No se ha realizado el voto.");
         }
     }
 }
