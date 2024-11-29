@@ -39,21 +39,23 @@ public class VotoService {
     }
 
     public String f_insertar_voto(Voto voto) throws TransactionException, IOException {
-        // Validar que el usaurio no haya votado
+
         if (contractVoteService.hasUserVoted((long) voto.getCampana_id(), (long) voto.getId_usuario()))
             throw new RuntimeException("El usuario ya ha votado");
-        // Transaccion
+
         TransactionReceipt transaction = contractVoteService.vote((long) voto.getCampana_id(),
                 (long) voto.getCandidato_id(),
                 (long) voto.getId_usuario());
-        // Verificar si fue correcta
-        if (transaction.isStatusOK())
-            return votoRepository.f_insertar_voto(
+
+        if (transaction.isStatusOK()) {
+            votoRepository.f_insertar_voto(
                     voto.getId_usuario(),
                     voto.getCampana_id(),
                     voto.getCandidato_id(),
                     transaction.getTransactionHash());
-        // Si sale mal, error en la transaccion
+            return transaction.getTransactionHash();
+        }
+
         throw new TransactionException("Error en el registro de la transacción");
     }
 

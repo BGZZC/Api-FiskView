@@ -3,18 +3,18 @@ package com.fiskview.apifiskview.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "voto")
-@NamedStoredProcedureQueries(value = {
-        @NamedStoredProcedureQuery(name = "f_insertar_voto", procedureName = "f_insertar_voto", parameters = {
+    @Entity
+    @Table(name = "voto")
+    @NamedStoredProcedureQueries(value = {
+            @NamedStoredProcedureQuery(name = "f_insertar_voto", procedureName = "f_insertar_voto", parameters = {
 
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_idusuario", type = int.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_idcampana", type = int.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_idcandidato", type = int.class),
-                @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_codigo_hash", type = String.class), }),
+                    @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_idusuario", type = int.class),
+                    @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_idcampana", type = int.class),
+                    @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_idcandidato", type = int.class),
+                    @StoredProcedureParameter(mode = ParameterMode.IN, name = "in_codigo_hash", type = String.class), }),
 
-})
-public class Voto {
+    })
+    public class Voto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
