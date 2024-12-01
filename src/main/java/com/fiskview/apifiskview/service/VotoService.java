@@ -56,10 +56,10 @@ public class VotoService {
                             .build();
             Voto voteEntity = votoRepository.save(voto);
             return VotoResponseDTO.builder().hashVoto(voteEntity.getCodigoHash()).fechaVoto(voto.getFechaVoto()).build();
-        }
-
+        
         throw new TransactionException("Error en el registro de la transacción");
     }
+
 
     public List<Voto> obtenerTodosLosVotos() {
         return votoRepository.findAll();

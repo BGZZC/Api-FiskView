@@ -2,6 +2,7 @@ package com.fiskview.apifiskview.controller;
 
 import com.fiskview.apifiskview.dto.*;
 import com.fiskview.apifiskview.model.Voto;
+import com.fiskview.apifiskview.repository.VotoRepository;
 import com.fiskview.apifiskview.service.ContractVoteService;
 import com.fiskview.apifiskview.service.EventService;
 import com.fiskview.apifiskview.service.VotoService;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/votos")
 public class VotoController {
-
+  
     private final VotoService votoService;
     private final EventService eventService;
     private final ContractVoteService contractVoteService;
@@ -30,7 +31,7 @@ public class VotoController {
     public ResponseEntity<VotoResponseDTO> crearVoto(@RequestBody VotoRequestDTO votoRequestDTO) throws TransactionException,
             IOException {
         VotoResponseDTO response = votoService.registrarVoto(votoRequestDTO);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED)
     }
 
     // Obtener todos los votos
@@ -93,6 +94,15 @@ public class VotoController {
             return ResponseEntity.ok(bloques);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    @GetMapping("/verificar")
+    public ResponseEntity<String> verificarHash(@RequestParam String hash) {
+        boolean exists = votoRepository.existsByCodigoHash(hash);
+        if (exists) {
+            return ResponseEntity.ok("Voto encontrado: Gracias por votar.");
+        } else {
+            return ResponseEntity.ok("Voto no encontrado: No se ha realizado el voto.");
         }
     }
 }
