@@ -2,6 +2,7 @@ package com.fiskview.apifiskview.security;
 
 import com.fiskview.apifiskview.model.UsuarioVotante;
 import com.fiskview.apifiskview.repository.UsuarioVotanteRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,11 +28,11 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private UsuarioVotanteRepository usuariovotanteRepository;
+    private final UsuarioVotanteRepository usuariovotanteRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -85,7 +86,6 @@ public class SecurityConfig {
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); // Encabezados permitidos
         config.setAllowCredentials(true); // Permitir cookies
         config.setMaxAge(3600L); // Cache de preflight requests
-
         source.registerCorsConfiguration("/**", config);
         return source;
     }

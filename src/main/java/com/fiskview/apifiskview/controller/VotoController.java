@@ -1,12 +1,11 @@
 package com.fiskview.apifiskview.controller;
 
-import com.fiskview.apifiskview.dto.BlockDTO;
-import com.fiskview.apifiskview.dto.DetailEventDTO;
-import com.fiskview.apifiskview.dto.EventTransaccionDTO;
+import com.fiskview.apifiskview.dto.*;
 import com.fiskview.apifiskview.model.Voto;
 import com.fiskview.apifiskview.service.ContractVoteService;
 import com.fiskview.apifiskview.service.EventService;
 import com.fiskview.apifiskview.service.VotoService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +16,21 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/votos")
 public class VotoController {
 
-    @Autowired
-    private VotoService votoService;
-
-    @Autowired
-    private EventService eventService;
-
-    @Autowired
-    private ContractVoteService contractVoteService;
+    private final VotoService votoService;
+    private final EventService eventService;
+    private final ContractVoteService contractVoteService;
 
 
     // Crear un nuevo voto
     @PostMapping
-    public ResponseEntity<?> crearVoto(@RequestBody Voto voto) throws TransactionException, IOException {
-        System.out.println(voto.toString());
-        String nuevoVoto = votoService.f_insertar_voto(voto);
-        return new ResponseEntity<>(nuevoVoto, HttpStatus.CREATED);
+    public ResponseEntity<VotoResponseDTO> crearVoto(@RequestBody VotoRequestDTO votoRequestDTO) throws TransactionException,
+            IOException {
+        VotoResponseDTO response = votoService.registrarVoto(votoRequestDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // Obtener todos los votos

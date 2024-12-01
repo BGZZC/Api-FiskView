@@ -10,5 +10,4 @@ public class TransactionDTO {
     private String from;
     private String to;
     private BigInteger value;
-
 }
