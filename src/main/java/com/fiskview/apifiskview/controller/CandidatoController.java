@@ -49,7 +49,7 @@ public class CandidatoController {
     public ResponseEntity<Candidato> updateCandidato(@PathVariable Long id, @RequestBody Candidato candidatoDetails) {
         return candidatoRepository.findById(id)
                 .map(candidato -> {
-                    candidato.setNombres(candidatoDetails.getNombres());
+                    candidato.setNombre(candidatoDetails.getNombre());
                     candidato.setApellidos(candidatoDetails.getApellidos());
                     candidato.setIdCampana(candidatoDetails.getIdCampana()); // Asegúrate de que esto esté definido
                     candidato.setIdPartido(candidatoDetails.getIdPartido()); // Asegúrate de que esto esté definido
