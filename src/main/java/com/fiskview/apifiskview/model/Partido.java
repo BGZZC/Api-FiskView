@@ -1,8 +1,16 @@
 package com.fiskview.apifiskview.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "partido")
 public class Partido {
 
@@ -16,27 +24,4 @@ public class Partido {
     @Column(name = "descripcion")
     private String descripcion;
 
-    public Long getIdPartido() {
-        return idPartido;
-    }
-
-    public void setIdPartido(Long idPartido) {
-        this.idPartido = idPartido;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 }

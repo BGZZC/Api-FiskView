@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class BlockDTO {
-
     private BigInteger blockNumber;
     private String blockHash;
     private BigInteger timestamp;

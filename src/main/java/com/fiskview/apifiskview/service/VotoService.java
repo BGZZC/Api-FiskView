@@ -2,6 +2,8 @@ package com.fiskview.apifiskview.service;
 
 import com.fiskview.apifiskview.dto.DetailEventDTO;
 import com.fiskview.apifiskview.dto.EventTransaccionDTO;
+import com.fiskview.apifiskview.dto.VotoRequestDTO;
+import com.fiskview.apifiskview.dto.VotoResponseDTO;
 import com.fiskview.apifiskview.exception.ResourceNotFoundException;
 import com.fiskview.apifiskview.model.Candidato;
 import com.fiskview.apifiskview.model.UsuarioVotante;
@@ -9,66 +11,52 @@ import com.fiskview.apifiskview.model.Voto;
 import com.fiskview.apifiskview.repository.CandidatoRepository;
 import com.fiskview.apifiskview.repository.UsuarioVotanteRepository;
 import com.fiskview.apifiskview.repository.VotoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.exceptions.TransactionException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class VotoService {
 
-    @Autowired
-    private VotoRepository votoRepository;
+    private final VotoRepository votoRepository;
+    private final CandidatoRepository candidatoRepository;
+    private final UsuarioVotanteRepository usuarioVotanteRepository;
+    private final ContractVoteService contractVoteService;
+    private final EventService eventService;
 
-    @Autowired
-    private CandidatoRepository candidatoRepository;
-    @Autowired
-    private UsuarioVotanteRepository usuarioVotanteRepository;
-    @Autowired
-    private ContractVoteService contractVoteService;
-    @Autowired
-    private EventService eventService;
 
-    public Voto crearVoto(Voto voto) {
-        return votoRepository.save(voto);
-    }
-
-    public String f_insertar_voto(Voto voto) throws TransactionException, IOException {
-        // Validar que el usuario no haya votado
-        if (contractVoteService.hasUserVoted((long) voto.getCampana_id(), (long) voto.getId_usuario())) {
+    @Transactional
+    public VotoResponseDTO registrarVoto(VotoRequestDTO votoRequestDTO) throws IOException, TransactionException {
+        if (contractVoteService.hasUserVoted(votoRequestDTO.getCampana_id(), votoRequestDTO.getId_usuario()))
             throw new RuntimeException("El usuario ya ha votado");
-        }
 
-        // Realizar la transacción en la blockchain
-        TransactionReceipt transaction = contractVoteService.vote(
-                (long) voto.getCampana_id(),
-                (long) voto.getCandidato_id(),
-                (long) voto.getId_usuario()
-        );
+        TransactionReceipt transaction = contractVoteService.vote(votoRequestDTO.getCampana_id(),
+                votoRequestDTO.getCandidato_id(),
+                votoRequestDTO.getId_usuario());
 
-        // Verificar si la transacción fue correcta
+
         if (transaction.isStatusOK()) {
-            // Obtener el hash de la transacción
-            String transactionHash = transaction.getTransactionHash();
-
-            // Insertar en la base de datos llamando al procedimiento almacenado
-            votoRepository.f_insertar_voto(
-                    voto.getId_usuario(),
-                    voto.getCampana_id(),
-                    voto.getCandidato_id(),
-                    transactionHash
-            );
-
-            // Retornar el hash para el controlador
-            return transactionHash;
-        }
-
-        // Si la transacción no fue exitosa, lanzar excepción
+            Voto voto =
+                    Voto.builder()
+                            .id_usuario((int) votoRequestDTO.getId_usuario())
+                            .campana_id((int) votoRequestDTO.getCampana_id())
+                            .candidato_id((int) votoRequestDTO.getCandidato_id())
+                            .codigoHash(transaction.getTransactionHash())
+                            .fechaVoto(LocalDateTime.now())
+                            .build();
+            Voto voteEntity = votoRepository.save(voto);
+            return VotoResponseDTO.builder().hashVoto(voteEntity.getCodigoHash()).fechaVoto(voto.getFechaVoto()).build();
+        
         throw new TransactionException("Error en el registro de la transacción");
     }
 
@@ -77,6 +65,7 @@ public class VotoService {
         return votoRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public DetailEventDTO obtenerDetalleEventoByHash(String hash) throws Exception {
         EventTransaccionDTO event = eventService.obtenerDetallesEventoPorTransaccion(hash);
         if (event == null)
@@ -90,11 +79,13 @@ public class VotoService {
         return DetailEventDTO.builder().candidato(candidato).usuario(usuarioVotante).fecha(LocalDateTime.now()).transactionHash(hash).build();
     }
 
+    @Transactional(readOnly = true)
     public Voto obtenerVotoPorId(Long id) {
         Optional<Voto> votoOptional = votoRepository.findById(id);
         return votoOptional.orElse(null);
     }
 
+    @Transactional
     public Voto actualizarVoto(Long id, Voto voto) {
         if (votoRepository.existsById(id)) {
             voto.setId(id);

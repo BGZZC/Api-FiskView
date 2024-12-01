@@ -1,11 +1,18 @@
 package com.fiskview.apifiskview.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "campana")
 public class Campana {
     @Id
@@ -27,59 +34,6 @@ public class Campana {
     @Column(name = "estado", nullable = false)
     private Short estado;
 
-    //@OneToMany(mappedBy = "campana")
-    //private List<Voto> votos;
-
-
-    // Getters and Setters
-
-    public Long getIdCampana() {
-        return id;
-    }
-
-    public void setIdCampana(Long id) {
-        this.id = id;
-    }
-
-    public Integer getAño() {
-        return año;
-    }
-
-    public void setAño(Integer año) {
-        this.año = año;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public LocalDate getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(LocalDate fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public LocalDate getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(LocalDate fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public Short getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Short estado) {
-        this.estado = estado;
-    }
 
     @Override
     public String toString() {
