@@ -36,6 +36,8 @@ public class Candidato {
     @Column(name = "propuesta", columnDefinition = "TEXT")
     private String propuesta;
 
+
+
     @Override
     public String toString() {
         return "Candidato{" +
