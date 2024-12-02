@@ -1,5 +1,6 @@
 package com.fiskview.apifiskview.controller;
 
+import com.fiskview.apifiskview.dto.CandidatoResponseDTO;
 import com.fiskview.apifiskview.model.Candidato;
 import com.fiskview.apifiskview.repository.CandidatoRepository;
 import jakarta.validation.Valid;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @RestController
 @RequestMapping("/api/candidatos")
 @Validated
@@ -21,8 +24,19 @@ public class CandidatoController {
     private CandidatoRepository candidatoRepository;
 
     @GetMapping
-    public List<Candidato> getAllCandidatos() {
-        return candidatoRepository.findAll();
+    public List<CandidatoResponseDTO> getAllCandidatos() {
+        return candidatoRepository.findAll().stream().map(c ->
+                CandidatoResponseDTO.builder()
+                        .idCandidato(c.getId())
+                        .idCampana(c.getIdCampana())
+                        .idPartido(c.getIdPartido())
+                        .nombres(c.getNombre())
+                        .apellidos(c.getApellidos())
+                        .informacion(c.getInformacion())
+                        .propuesta("Cambios!!")
+                        .build()
+        ).toList();
+
     }
 
     @GetMapping("/partido/{idPartido}")
